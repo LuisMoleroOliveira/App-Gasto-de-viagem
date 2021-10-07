@@ -1,9 +1,12 @@
 package br.com.molero.gastodeviagem
 
+import android.icu.number.NumberRangeFormatter
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_main.*
+import java.lang.NumberFormatException
 
 class MainActivity : AppCompatActivity(), View.OnClickListener {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -16,19 +19,40 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
     override fun onClick(view: View) {
         val id = view.id
-        if (id == R.id.buttonCalculate){
+        if (id == R.id.buttonCalculate) {
             calculate()
         }
 
     }
-    private fun calculate(){
 
-        val distance = editDistance.text.toString().toFloat()
-        val price = editPrice.text.toString().toFloat()
-        val autonomy = editAutonomy.text.toString().toFloat()
+    fun calculate() {
+        if (validationOK()) {
 
-        val totalValue = (distance * price) / autonomy
-        textTotalValue.text = "R$ ${"%.2f".format(totalValue)}"
+            try {
+                val distance = editDistance.text.toString().toFloat()
+                val price = editPrice.text.toString().toFloat()
+                val autonomy = editAutonomy.text.toString().toFloat()
+
+                val totalValue = (distance * price) / autonomy
+                textTotalValue.text = "R$ ${"%.2f".format(totalValue)}"
+            } catch (exc: Exception) {
+                Toast.makeText(this, getString(R.string.valoresValidos), Toast.LENGTH_LONG).show()
+            }
+        } else {
+
+            Toast.makeText(this, getString(R.string.valoresValidos), Toast.LENGTH_LONG).show()
+
+        }
+    }
+
+    private fun validationOK(): Boolean {
+        return (editDistance.text.toString() != ""
+            && editPrice.text.toString() != ""
+            && editAutonomy.text.toString() != ""
+            && editDistance.text.toString() != "0"
+            && editPrice.text.toString() != "0"
+            && editAutonomy.text.toString() != "0"
+        )
 
     }
 }
